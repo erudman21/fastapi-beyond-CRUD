@@ -1,0 +1,42 @@
+name: Conventional Commit Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  check-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Validate Conventional Commits
+        id: commit-check
+        uses: webiny/action-conventional-commits@v1.1.0
+        continue-on-error: true
+
+      - name: Close PR if commits are invalid
+        if: steps.commit-check.outcome == 'failure'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              state: "closed"
+            });
+            console.log("PR closed due to non-conventional commit messages.");
+
+      - name: Send notification email for invalid commits
+        if: steps.commit-check.outcome == 'failure'
+        env:
+          TO_EMAIL: ${{ github.event.pull_request.user.email }}
+        run: |
+          chmod +x send_email.sh
+          ./send_email.sh "PR #${{ github.event.pull_request.number }} closed: Invalid commit messages"
+
+      - name: Fail job if commits are invalid
+        if: steps.commit-check.outcome == 'failure'
+        run: exit 1
