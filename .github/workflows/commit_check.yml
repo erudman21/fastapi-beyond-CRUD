@@ -1,5 +1,6 @@
 name: Conventional Commit Check
 
+# bad
 on:
   pull_request:
     types: [opened, synchronize]
