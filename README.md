@@ -4,6 +4,15 @@ This is the source code for the [FastAPI Beyond CRUD](https://youtube.com/playli
 
 For more details, visit the project's [website](https://jod35.github.io/fastapi-beyond-crud-docs/site/).
 
+# GitHub Actions
+The repo has two GitHub Actions: one to check for conventional commits and one for the nightly build.
+
+[This](https://github.com/webiny/action-conventional-commits) library is used to check for conventional commits.
+
+The nightly builds run at 12am PST and are pushed to docker hub.
+
+Emails are sent with ethereal email.
+
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
